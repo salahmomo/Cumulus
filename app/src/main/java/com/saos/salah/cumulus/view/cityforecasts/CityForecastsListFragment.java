@@ -1,6 +1,9 @@
 package com.saos.salah.cumulus.view.cityforecasts;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,12 +17,7 @@ import com.saos.salah.cumulus.cache.CacheManager;
 import com.saos.salah.cumulus.model.DailyForecast;
 import com.saos.salah.cumulus.model.Forecast;
 import com.saos.salah.cumulus.services.OpenWeatherMapSingleton;
-import com.saos.salah.cumulus.view.HomeActivity;
-import com.saos.salah.cumulus.view.citys.CityListAdapter;
 import com.saos.salah.cumulus.view.forecast.ForecastActivity;
-
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,13 +66,14 @@ public class CityForecastsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_forecastlist, container, false);
+        View view = inflater.inflate(R.layout.fragment_cityforecastlist, container, false);
         ButterKnife.bind(this, view);
 
         if (getArguments() != null) {
             cityNameCode = getArguments().getString(CITY_NAME_CODE_ARG);
         }
 
+        // initialize recycler view and adapter
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -93,22 +92,28 @@ public class CityForecastsListFragment extends Fragment {
 
         mRecyclerView.setAdapter(cityForecastListAdapter);
 
-
+        //check if we already have the city dailyForecast in appCache
         DailyForecast dailyForecastFromMemory = CacheManager.getInstance(getContext()).getFromMemoryCache(this.cityNameCode);
 
         if (dailyForecast != null)
             this.dailyForecast = dailyForecastFromMemory;
         else {
             OpenWeatherMapSingleton.getInstance()
-                    .openWeatherMapServices.searchDailyForcast(cityNameCode, "14", "metric", getString(R.string.app_id))
+                    .openWeatherMapServices.searchDailyForcast(cityNameCode, "14", getString(R.string.celcius_unitsformat), getString(R.string.app_id))
                     .enqueue(new Callback<DailyForecast>() {
 
                         @Override
                         public void onResponse(Call<DailyForecast> call, Response<DailyForecast> response) {
                             CityForecastsListFragment.this.dailyForecast = response.body();
                             if (CityForecastsListFragment.this.dailyForecast != null && CityForecastsListFragment.this.dailyForecast.getList() != null) {
-                                CacheManager.getInstance(getContext()).putToMemoryCache(CityForecastsListFragment.this.cityNameCode, CityForecastsListFragment.this.dailyForecast);
-                                CityForecastsListFragment.this.cityForecastListAdapter.updateForecastList(CityForecastsListFragment.this.dailyForecast.getList());
+
+                                //Check if we have internet access
+                                ConnectivityManager connMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                                if (networkInfo != null && networkInfo.isConnected()) {
+                                    CacheManager.getInstance(getContext()).putToMemoryCache(CityForecastsListFragment.this.cityNameCode, CityForecastsListFragment.this.dailyForecast);
+                                    CityForecastsListFragment.this.cityForecastListAdapter.updateForecastList(CityForecastsListFragment.this.dailyForecast.getList());
+                                }
                             }
                         }
 

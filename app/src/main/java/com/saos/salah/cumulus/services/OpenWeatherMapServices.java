@@ -14,6 +14,9 @@ import retrofit2.http.Query;
  * Created by Salah on 18/04/2018.
  */
 
+/**
+ * Service for OpenWeatherMap API
+ */
 public interface OpenWeatherMapServices {
     public static final String ENDPOINT = "http://api.openweathermap.org/data/2.5/forecast/";
 

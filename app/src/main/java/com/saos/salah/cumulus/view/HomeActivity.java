@@ -21,6 +21,9 @@ import com.saos.salah.cumulus.view.citys.CityListFragment;
 
 import butterknife.BindView;
 
+/**
+ * Home activity
+ */
 public class HomeActivity extends AppCompatActivity {
 
     private CityListFragment cityListFragment = null;
@@ -35,19 +38,14 @@ public class HomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setActionBarTitle("Citys Forecast");
 
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-            cityListFragment = (CityListFragment) fragmentManager.findFragmentByTag(CityListFragment.TAG);
-            if (cityListFragment == null) {
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                cityListFragment = new CityListFragment();
-                fragmentTransaction.add(R.id.fragment, cityListFragment, CityListFragment.TAG);
-                fragmentTransaction.commit();
-            }
+        cityListFragment = (CityListFragment) fragmentManager.findFragmentByTag(CityListFragment.TAG);
+        if (cityListFragment == null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            cityListFragment = new CityListFragment();
+            fragmentTransaction.add(R.id.fragment, cityListFragment, CityListFragment.TAG);
+            fragmentTransaction.commit();
         }
     }
 

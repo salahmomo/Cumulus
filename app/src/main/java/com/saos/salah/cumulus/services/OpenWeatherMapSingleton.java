@@ -4,7 +4,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by Salah on 22/04/2018.
+ * Singleton instance To call OpenWeatherMap API
  */
 
 public class OpenWeatherMapSingleton {

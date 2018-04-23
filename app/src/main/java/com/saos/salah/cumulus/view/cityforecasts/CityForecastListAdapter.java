@@ -5,14 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.saos.salah.cumulus.R;
 import com.saos.salah.cumulus.model.Forecast;
 import com.saos.salah.cumulus.model.Weather;
-import com.saos.salah.cumulus.view.citys.CityListAdapter;
 import com.saos.salah.cumulus.view.forecast.ForecastActivity;
 import com.squareup.picasso.Picasso;
 
@@ -61,7 +59,7 @@ public class CityForecastListAdapter extends RecyclerView.Adapter<CityForecastLi
     @Override
     public CityForecastListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_forecastlist, parent, false);
+                .inflate(R.layout.item_cityforecastlist, parent, false);
         CityForecastListAdapter.ViewHolder vh = new CityForecastListAdapter.ViewHolder(v);
         return vh;
     }
@@ -70,7 +68,7 @@ public class CityForecastListAdapter extends RecyclerView.Adapter<CityForecastLi
     public void onBindViewHolder(CityForecastListAdapter.ViewHolder holder, int position) {
         Forecast forecast = forecastsList.get(position);
 
-        holder.day.setText(String.format("%tD", forecast.getDt()));
+        holder.day.setText(String.format("%tD", forecast.getDt() * 1000));
         holder.temp.setText(Float.toString(forecast.getTemp().getDay()) + "°");
         Weather weather = forecast.getWeather().get(0);
         Picasso.get().load(String.format("%s%s.png", ForecastActivity.IMG_URL, weather.getIcon())).into(holder.weather);

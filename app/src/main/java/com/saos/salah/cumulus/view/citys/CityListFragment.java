@@ -25,6 +25,10 @@ import butterknife.ButterKnife;
 
 public class CityListFragment extends Fragment {
 
+    /**
+     *     List of city we need to see his for cast for 14 next day
+     *     pattern of cityName is : "[CityName], [CountryCode]"
+     */
     private List<String> citysNames =  Arrays.asList("Paris, FR", "Istanbul, TR", "Tokyo, JP");
 
     @BindView(R.id.city_list)
